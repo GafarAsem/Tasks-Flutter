@@ -1,83 +1,95 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
-import 'settings_page.dart';
-import 'profile_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Bottom Navigation Bar',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      debugShowCheckedModeBanner: false,
+      title: 'Text Field',
+      home: Scaffold(
+        appBar: AppBar(backgroundColor: Colors.blue),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextField(
+                  controller: _textController,
+                  decoration: const InputDecoration(hintText: 'اكتب   '),
+                ),
+                const SizedBox(height: 30),
+
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            SecondScreen(textData: _textController.text),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
+                  child: const Text(
+                    'اعرض النص في الصفحة الاخرى',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-      home: const MainScreen(),
     );
   }
 }
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class SecondScreen extends StatelessWidget {
+  final String textData;
 
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
-  final List<Widget> _pages = [
-    const HomePage(),
-    const SettingsPage(),
-    const ProfilePage(),
-  ];
-  String getTitle(int index) {
-    switch (index) {
-      case 0:
-        return 'الرئيسية';
-      case 1:
-        return 'الإعدادات';
-      case 2:
-        return 'الحساب';
-      default:
-        return '';
-    }
-  }
+  const SecondScreen({required this.textData, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title : Text(getTitle(_currentIndex))),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
+      appBar: AppBar(
+        title: const Text('الصفحة الجديدة'),
+        backgroundColor: Colors.orange,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items:  [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'الرئيسية',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'الإعدادات',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'الحساب',
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text('النص الذي أرسلته:', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 10),
+            Text(
+              textData.isEmpty ? 'لم تكتب شيئاً!' : textData,
+              style: const TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('العودة'),
+            ),
+          ],
+        ),
       ),
     );
   }
